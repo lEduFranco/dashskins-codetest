@@ -4,7 +4,6 @@ import { User } from '@application/entities/user';
 export class PrismaUserMapper {
   static toPrisma(user: RawUser) {
     return {
-      id: user.id,
       name: user.name,
       age: user.age,
       email: user.email,

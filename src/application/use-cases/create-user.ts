@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../repositories/users-repository';
+import { UsersRepository } from '@application/repositories/users-repository';
 import { User } from '@application/entities/user';
+import { UserAlreadyExists } from '@application/use-cases/errors/user-already-exists';
 
 interface CreateUserRequest {
   name: string;
@@ -10,7 +11,7 @@ interface CreateUserRequest {
 }
 
 interface CreateUserResponse {
-  message: string
+  user: User;
 }
 
 @Injectable()
@@ -20,20 +21,25 @@ export class CreateUser {
   async execute(
     request: CreateUserRequest,
   ): Promise<CreateUserResponse> {
-
     const { age, avatar, email, name } = request
 
-    const user = new User({
+    const userAlreadyExists = await this.usersRepository.findByEmail(email);
+
+    if (userAlreadyExists) {
+      throw new UserAlreadyExists();
+    }
+
+    const createUser = new User({
       name,
       age, 
       avatar, 
       email
     })
 
-    await this.usersRepository.create(user);
+    const user = await this.usersRepository.create(createUser);
 
     return {
-      message: 'User created'
+      user
     }
   }
 }

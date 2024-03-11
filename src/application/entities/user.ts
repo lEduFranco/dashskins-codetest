@@ -1,5 +1,6 @@
-// import { randomUUID } from 'node:crypto';
+
 import { Replace } from '@helpers/Replace';
+import { ObjectId } from 'bson';
 
 
 export interface UserProps {
@@ -19,7 +20,7 @@ export class User {
     props: Replace<UserProps, { createdAt?: Date, updatedAt?: Date }>,
     id?: string,
   ) {
-    // this._id = id ?? randomUUID();
+    this._id = id ?? new ObjectId().toHexString();
     this.props = {
       ...props,
       createdAt: props.createdAt ?? new Date(),
